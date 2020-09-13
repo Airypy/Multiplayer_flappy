@@ -1,0 +1,16 @@
+{
+  "name": "js_flappybird-master",
+  "version": "1.0.0",
+  "description": "Making Flappy Bird Using Javascript and HTML",
+  "main": "flappybird.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

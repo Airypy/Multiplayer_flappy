@@ -1,0 +1,92 @@
+
+<canvas id="canvas" width="288" height="500" style="border:1px solid #000000;"></canvas>
+<h1 id="Judgement">Multiplayer Flappy Birds</h1>
+<p style="font-family:verdana">Story-In this quarantine our Flappy Bird came into relationship!Can you prove that he is still the legend!</p>
+<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+<script>
+
+  var cvs = document.getElementById("canvas");
+  var ctx = cvs.getContext("2d");
+	ctx.font = '30px Arial';
+  //Game
+  var Img={};
+  Img.bird = new Image();
+  Img.bird2=new Image();
+  Img.bg = new Image();
+  Img.fg = new Image();
+  Img.pipeNorth = new Image();
+  Img.pipeSouth = new Image();
+  Img.bird.src = "/client/images/bird.png";
+  Img.bird2.src = "/client/images/birds3.png";
+  Img.bg.src = "/client/images/bg.png";
+  Img.fg.src = "/client/images/fg.png";
+  Img.pipeNorth.src = "/client/images/pipeNorth.png";
+  Img.pipeSouth.src = "/client/images/pipeSouth.png";
+
+  var Aud={};
+  Aud.fly=new Audio();
+
+  Aud.fly.src = "/clients/sounds/fly.mp3";
+
+
+  var gap=85;
+  var constant;
+
+	var socket = io();
+  var player1=false;
+
+	socket.on('newPositions',function(data){
+    drawBg();
+    constant=Img.pipeNorth.height+gap;
+
+    for(var i = 0 ; i < data.player.length; i++){
+      for(var j=0 ;j <data.pipe.length;j++){
+        if( data.player[i].x + Img.bird.width >= data.pipe[j].x && data.player[i].x<= data.pipe[j].x  + Img.pipeNorth.width && (data.player[i].y <= data.pipe[j].y + Img.pipeNorth.height || data.player[i].y +Img.bird.height >= data.pipe[j].y+constant) || data.player[i].y + Img.bird.height >=  cvs.height - Img.fg.height){
+                  var p= document.getElementById("Judgement");
+                  if(i==1){
+                    if(player1){
+                      p.innerHTML="<span style=\"color:blue\">" + "DRAW! Try Again!" + "</span>";
+                    }else{
+                      p.innerHTML="Congratulations! "+"<span style=\"color:yellow\">" + "Yellow" + "</span>" +" BubmleBee";
+                    }
+                  }if(i==0){
+                    player1=true;
+                    p.innerHTML="Congratulations! "+"<span style=\"color:red\">" + "Red" + "</span>" +" Beatle";
+                  }
+                  socket.emit('gameover',{inputId:'Over',state:true});
+        }
+      }
+    }
+
+    for(var j = 0 ; j < data.player.length; j++){
+      console.log(j);
+      if(j==0){
+        ctx.drawImage(Img.bird,data.player[j].x,data.player[j].y);
+      }else{
+        ctx.drawImage(Img.bird2,data.player[j].x,data.player[j].y);
+      }
+    }
+
+    for(var j=0 ;j <data.pipe.length;j++){
+
+      ctx.drawImage(Img.pipeNorth,data.pipe[j].x,data.pipe[j].y);
+      ctx.drawImage(Img.pipeSouth,data.pipe[j].x,data.pipe[j].y+constant);
+    }
+
+    ctx.drawImage(Img.fg,0,cvs.height - Img.fg.height);
+	});
+
+  var drawBg=function(){
+      ctx.drawImage(Img.bg,0,0);
+  }
+	document.onkeydown = function(event){
+    Aud.fly.play();
+		if(event.keyCode === 32)	//d
+			socket.emit('keyPress',{inputId:'Up',state:true});
+	}
+	document.onkeyup = function(event){
+		if(event.keyCode === 32)	//d
+			socket.emit('keyPress',{inputId:'Up',state:false});
+	}
+
+</script>
