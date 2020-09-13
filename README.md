@@ -8,5 +8,9 @@ Making Flappy Bird Using Node.js,Javascript and HTML5
 
 To run,clone on your local machine and go to the root folder and run->node app.js.
  
+#SCREENSHOT OF GAME
+
+![Alt text](/Game.jpg?raw=true "GAME")
+
 
 @airypy  
